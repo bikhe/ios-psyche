@@ -1,5 +1,23 @@
 # iOS 16 on sweet (Redmi Note 10 Pro, SM7150) - working notes
 
+## psyche (Mi 12X, SM8250) port - handoff (2026-10-26)
+
+This fork targets psyche; the sweet log below is the upstream history. See
+`PSYCHE.md` for the hardware differences and bring-up order.
+
+- Done (from device trees, **nothing booted on psyche yet**): `mkadt.py
+  --device psyche` (default; vtimer INTID 27, root compatible
+  `xiaomi,psyche|xiaomi,sweet|qcom,sm8250`, CPU compatible
+  `qcom,kryo585|qcom,kryo470`); shim `board.h` (IMEM restart reason
+  `0x146bf65c`, timer INTIDs 27/30) and `display.c` (ping-pong autorefresh
+  for the command-mode panel); patch 0082 (vol-up = PM8150 GPIO6 PPID 0x0c5,
+  touch/USB/real battery off on psyche). 0082 applies on top of 0001-0081
+  (`git apply --check`), but no CI kernel build has run with it yet.
+- Next: CI kernel build with 0082; boot the bare shim on psyche and read the
+  `PANEL`/`SCANOUT` lines (does autorefresh show the console? stride
+  0x1140?); confirm the boot.img header version and the live memory node;
+  then xnu with `cpus=1`. After that: ST FTS touch on GENI SPI (QUP SE4).
+
 ## Agent handoff / active work (2026-10-15, latest)
 
 ### >>> UPDATE 2026-10-18 (read first, then the 10-17 handoff below) <<<

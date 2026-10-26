@@ -1,5 +1,12 @@
 # ios-sweet
 
+> **This fork (ios-psyche) ports ios-sweet to the Xiaomi Mi 12X (`psyche`, SM8250).**
+> See [`PSYCHE.md`](PSYCHE.md) for what differs, how to build for psyche and
+> the bring-up order. The psyche port is untested on hardware; the rest of
+> this README describes the original sweet project. The tools now default to
+> psyche: pass `--device sweet` to `mkadt.py` and `DEVICE=sweet` to
+> `shim/build.sh` for the Redmi Note 10 Pro.
+
 **Apple's iOS 16 running on a Redmi Note 10 Pro.**
 
 This project ports Apple's open-source XNU kernel (xnu-8796, the iOS 16 generation) to the Xiaomi Redmi Note 10 Pro (`sweet`, Qualcomm SM7150 / Snapdragon 732G). On top of it runs the **unmodified iOS 16.7.16 (20H392) userland of the iPhone X**: launchd, the system daemons, backboardd, SpringBoard and the stock apps.
@@ -100,10 +107,10 @@ ipsw img4 im4p extract research/ipsw-x/dt/Firmware/all_flash/DeviceTree.d22ap.im
 Needs `aarch64-linux-gnu-gcc` and `mkbootimg`.
 
 ```sh
-python3 tools/mkadt.py shim/out/sweet.adt --highmem
+python3 tools/mkadt.py shim/out/sweet.adt --device sweet --highmem
 python3 tools/mkpayload.py xnu/out/kernel.development.sweet shim/out/sweet.adt shim/out/payload.bin \
     --cmdline 'debug=0xc serial=3 cpus=6 keepsyms=1 -enable_kprintf_spam -noprogress rd=ufsroot0 unentitled_ios_sim_launch=1 ignition_level=1 wdt_test=no_user_checkin ufsrw=1 rootrw=1 launchd_unsecure_cache=1 wdt=-1 sweetfb_noconsole=1 sweetfb_hz=30'
-shim/build.sh ../shim/out/payload.bin      # -> shim/out/shim-boot.img
+DEVICE=sweet shim/build.sh ../shim/out/payload.bin      # -> shim/out/shim-boot.img
 ```
 
 What the less obvious boot-args do:
@@ -186,6 +193,7 @@ Not in git: partition backups, live device trees, recovery images, Apple firmwar
 | 0066–0067 | Fault-region crash info; console mute |
 | 0068 | IOSurface lookup semantics for already-mapped surfaces |
 | 0069 | Batched persistent-log flushes |
+| 0082 | psyche (Mi 12X) board: volume-up on PM8150 GPIO6; touch, USB and battery readout off until ported ([`PSYCHE.md`](PSYCHE.md)) |
 
 ## Key hardware facts
 
